@@ -4,6 +4,7 @@ import http "./odin-http"
 import "core:fmt"
 import "core:log"
 import "core:net"
+import "core:os"
 import "core:strings"
 import "core:time"
 
@@ -12,11 +13,29 @@ printf :: fmt.printfln
 tprint :: fmt.tprintln
 tprintf :: fmt.tprintfln
 
-// TODO: get these from .env
-cors_allow := [?]string{"http://localhost:3000"}
+cors_allow: []string
 
 main :: proc() {
 	context.logger = log.create_console_logger(.Info)
+
+	env_vars, env_error := parse_env()
+	defer delete(env_vars)
+
+	switch env_error {
+	case .NOT_FOUND:
+		fmt.eprintln("File .env doesn't exist but is required for this server to run.")
+		return
+	case .INVALID_FORMAT:
+		fmt.eprintln("Invalid .env format, please make sure there aren't any anomalies.")
+		return
+	case .NONE:
+	}
+
+	if "ALLOW_ORIGINS" in env_vars {
+		cors_allow = strings.split(env_vars["ALLOW_ORIGINS"], ",")
+	} else {
+		log.warn("No ALLOW_ORIGINS env key present, this might result CORS issues.")
+	}
 
 	s: http.Server
 	// Register a graceful shutdown when the program receives a SIGINT signal.
@@ -27,14 +46,53 @@ main :: proc() {
 	http.router_init(&router)
 	defer http.router_destroy(&router)
 
+	http.route_get(&router, "/pages", http.handler(get_all_pages))
 	http.route_get(&router, "/pages/(.*)", http.handler(get_page))
 
 	routed := http.router_handler(&router)
 
-	log.info("Listening on http://localhost:8000")
+	print("Listening on http://localhost:8000")
 
 	err := http.listen_and_serve(&s, routed, net.Endpoint{address = net.IP4_Loopback, port = 8000})
 	fmt.assertf(err == nil, "server stopped with error: %v", err)
+}
+
+PARSE_ENV_ERROR :: enum {
+	NONE,
+	NOT_FOUND,
+	INVALID_FORMAT,
+}
+
+parse_env :: proc() -> (kv_pairs: map[string]string, error: PARSE_ENV_ERROR) {
+	data, ok := os.read_entire_file(".env", context.allocator)
+	if !ok {
+		return {}, .NOT_FOUND
+	}
+
+	str := string(data)
+	for line in strings.split_lines_iterator(&str) {
+		trimmed_string := strings.trim(line, "")
+
+		// Skip empty lines
+		if len(trimmed_string) == 0 {
+			continue
+		}
+
+		// Skip comments
+		if strings.starts_with(trimmed_string, "#") {
+			continue
+		}
+
+		split_line := strings.split(line, "=")
+
+		if len(split_line) != 2 || len(split_line[0]) == 0 {
+			return {}, .INVALID_FORMAT
+		}
+
+		kv_pairs[split_line[0]] = split_line[1]
+	}
+
+	return kv_pairs, .NONE
 }
 
 
@@ -67,6 +125,24 @@ PageResponse :: struct {
 	title:         string,
 	backgroundUrl: Maybe(string),
 	tabs:          []PageTab,
+}
+
+PageLink :: struct {
+	slug:  string,
+	title: string,
+	icon:  Maybe(string),
+}
+
+get_all_pages :: proc(req: ^http.Request, res: ^http.Response) {
+	set_cors(res)
+
+	pages := [?]PageLink {
+		{slug = "project-1", title = "Project 1"},
+		{slug = "project-3", title = "Project 2"},
+		{slug = "project-3", title = "Project 3"},
+	}
+
+	http.respond_json(res, pages)
 }
 
 get_page :: proc(req: ^http.Request, res: ^http.Response) {

@@ -1,2 +1,4 @@
 nota-server
 .env
+.data
+file-db.bin

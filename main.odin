@@ -21,14 +21,15 @@ main :: proc() {
 	env_vars, env_error := parse_env()
 	defer delete(env_vars)
 
-	switch env_error {
-	case .NOT_FOUND:
-		fmt.eprintln("File .env doesn't exist but is required for this server to run.")
-		return
-	case .INVALID_FORMAT:
-		fmt.eprintln("Invalid .env format, please make sure there aren't any anomalies.")
-		return
-	case .NONE:
+	if env_error != nil {
+		switch env_error {
+		case .NOT_FOUND:
+			fmt.eprintln("File .env doesn't exist but is required for this server to run.")
+			return
+		case .INVALID_FORMAT:
+			fmt.eprintln("Invalid .env format, please make sure there aren't any anomalies.")
+			return
+		}
 	}
 
 	if "ALLOW_ORIGINS" in env_vars {
@@ -58,7 +59,6 @@ main :: proc() {
 }
 
 PARSE_ENV_ERROR :: enum {
-	NONE,
 	NOT_FOUND,
 	INVALID_FORMAT,
 }
@@ -92,7 +92,7 @@ parse_env :: proc() -> (kv_pairs: map[string]string, error: PARSE_ENV_ERROR) {
 		kv_pairs[split_line[0]] = split_line[1]
 	}
 
-	return kv_pairs, .NONE
+	return kv_pairs, nil
 }
 
 

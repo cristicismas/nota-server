@@ -1,8 +1,11 @@
 import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
+import bodyParser from "body-parser";
+import cookieParser from "cookie-parser";
+import validateSession from "./helpers/validateSession.js";
 
-import { getAllPages, getPage } from "./handlers.js";
+import { getAllPages, getPage, login, validate } from "./handlers.js";
 
 dotenv.config({});
 
@@ -11,10 +14,31 @@ const port = 8000;
 
 const corsOptions = {
   origin: process.env.ALLOW_ORIGIN,
+  credentials: true,
 };
 
-app.use(cors(corsOptions));
+const nonProtectedRoutes = ["/login"];
 
+app.use(bodyParser.json());
+app.use(cors(corsOptions));
+app.use(cookieParser());
+
+app.use((req, res, next) => {
+  if (nonProtectedRoutes.includes(req.path)) {
+    next();
+  } else {
+    const isValid = validateSession(req);
+
+    if (!isValid) {
+      return res.status(401).json({ message: "Session id is invalid" });
+    }
+
+    next();
+  }
+});
+
+app.get("/validate", validate);
+app.post("/login", login);
 app.get("/pages", getAllPages);
 app.get("/pages/:page", getPage);
 

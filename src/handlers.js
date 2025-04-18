@@ -1,3 +1,13 @@
+import { v4 as uuidv4 } from "uuid";
+import dotenv from "dotenv";
+import bcrypt from "bcrypt";
+import validateSession from "./helpers/validateSession.js";
+import db from "./helpers/db.js";
+import CONSTANTS from "./constants.js";
+const THREE_MONTHS = CONSTANTS.THREE_MONTHS;
+
+dotenv.config({});
+
 export const getAllPages = (_req, res) => {
   const pages = [
     { slug: "project-1", title: "Project 1" },
@@ -49,4 +59,67 @@ export const getPage = (req, res) => {
   }
 };
 
-export default {};
+const getUser = (username) => {
+  return db.prepare("SELECT * FROM users WHERE username = ?").get(username);
+};
+
+export const login = async (req, res) => {
+  if (!req.body) return res.status(400).send("No body present in the request");
+
+  const body = req.body;
+
+  const { username, password } = body;
+
+  if (!username || !password) {
+    return res
+      .status(400)
+      .send("No username or password present in the request");
+  }
+
+  const user = await getUser(username);
+
+  if (!user) {
+    return res.status(401).json({ message: "Unauthorized" });
+  }
+
+  const isCorrectPassword = await bcrypt.compare(password, user.password);
+
+  if (!isCorrectPassword) {
+    return res.status(401).json({ message: "Unauthorized" });
+  }
+
+  const sessionId = uuidv4();
+
+  db.prepare("INSERT INTO sessions (user_id, session_uuid) values (?, ?)").run(
+    user.id,
+    sessionId,
+  );
+
+  res.cookie("sessionId", sessionId, {
+    domain: process.env.SERVER_DOMAIN,
+    maxAge: THREE_MONTHS,
+    httpOnly: true,
+    secure: true,
+    sameSite: "lax",
+  });
+
+  return res.status(200).json({ sessionId });
+};
+
+export const validate = (req, res) => {
+  const isValidSession = validateSession(req);
+
+  if (!isValidSession) {
+    res.cookie("sessionId", "", {
+      domain: process.env.SERVER_DOMAIN,
+      maxAge: THREE_MONTHS,
+      httpOnly: true,
+      secure: true,
+      sameSite: "lax",
+    });
+
+    return res.status(401).json({ message: "Session id is invalid" });
+  }
+
+  return res.status(200).json({ message: "Session is valid" });
+};

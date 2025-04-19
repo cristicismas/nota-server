@@ -1,10 +1,9 @@
 import { v4 as uuidv4 } from "uuid";
+import setSessionCookie from "./helpers/setSessionCookie.js";
 import dotenv from "dotenv";
 import bcrypt from "bcrypt";
 import validateSession from "./helpers/validateSession.js";
 import db from "./helpers/db.js";
-import CONSTANTS from "./constants.js";
-const THREE_MONTHS = CONSTANTS.THREE_MONTHS;
 
 dotenv.config({});
 
@@ -95,13 +94,7 @@ export const login = async (req, res) => {
     sessionId,
   );
 
-  res.cookie("sessionId", sessionId, {
-    domain: process.env.SERVER_DOMAIN,
-    maxAge: THREE_MONTHS,
-    httpOnly: true,
-    secure: true,
-    sameSite: "lax",
-  });
+  setSessionCookie(res, sessionId);
 
   return res.status(200).json({ sessionId });
 };
@@ -110,16 +103,26 @@ export const validate = (req, res) => {
   const isValidSession = validateSession(req);
 
   if (!isValidSession) {
-    res.cookie("sessionId", "", {
-      domain: process.env.SERVER_DOMAIN,
-      maxAge: THREE_MONTHS,
-      httpOnly: true,
-      secure: true,
-      sameSite: "lax",
-    });
+    setSessionCookie(res, "");
 
     return res.status(401).json({ message: "Session id is invalid" });
   }
 
   return res.status(200).json({ message: "Session is valid" });
+};
+
+export const logout = (req, res) => {
+  const sessionId = req?.cookies?.sessionId;
+
+  const foundSession = db
+    .prepare("SELECT 1 FROM sessions WHERE session_uuid = ?")
+    .get(sessionId);
+
+  if (foundSession) {
+    db.prepare("DELETE FROM sessions WHERE session_uuid = ?").run(sessionId);
+  }
+
+  setSessionCookie(res, "");
+
+  return res.json({ message: "Successfully logged out" });
 };

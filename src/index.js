@@ -5,14 +5,9 @@ import bodyParser from "body-parser";
 import cookieParser from "cookie-parser";
 import validateSession from "./helpers/validateSession.js";
 
-import {
-  getAllPages,
-  getPage,
-  login,
-  validate,
-  logout,
-  addPage,
-} from "./handlers.js";
+import handlers from "./handlers/index.js";
+
+const { getAllPages, getPage, login, validate, logout, addPage } = handlers;
 
 dotenv.config({});
 

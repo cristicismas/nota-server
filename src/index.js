@@ -7,7 +7,8 @@ import validateSession from "./helpers/validateSession.js";
 
 import handlers from "./handlers/index.js";
 
-const { getAllPages, getPage, login, validate, logout, addPage } = handlers;
+const { getAllPages, getPage, login, validate, logout, addPage, deletePage } =
+  handlers;
 
 dotenv.config({});
 
@@ -47,6 +48,7 @@ app.post("/page", addPage);
 
 app.get("/pages", getAllPages);
 app.get("/pages/:page", getPage);
+app.delete("/pages/:page_id", deletePage);
 
 app.listen(port, () => {
   console.log("Listening on port: ", port);

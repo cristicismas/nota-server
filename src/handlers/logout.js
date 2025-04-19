@@ -1,4 +1,5 @@
 import db from "../helpers/db.js";
+import setSessionCookie from "../helpers/setSessionCookie.js";
 
 const logout = (req, res) => {
   const sessionId = req?.cookies?.sessionId;

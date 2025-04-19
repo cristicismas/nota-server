@@ -57,6 +57,21 @@ const addPage = (req, res) => {
     "INSERT INTO pages (slug, user_id, page_uuid, page_order, page_title) VALUES (@slug, @user_id, @page_uuid, @page_order, @page_title)",
   ).run(newPageData);
 
+  const addedPageId = db
+    .prepare("SELECT page_id FROM pages WHERE slug = ?")
+    .get(pageSlug).page_id;
+
+  const firstTabData = {
+    title: "First tab",
+    page_id: addedPageId,
+    tab_type: "text",
+    tab_order: 0,
+  };
+
+  db.prepare(
+    "INSERT INTO tabs (title, page_id, tab_type, tab_order) VALUES (@title, @page_id, @tab_type, @tab_order)",
+  ).run(firstTabData);
+
   return res.json(newPageData);
 };
 

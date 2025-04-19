@@ -1,6 +1,7 @@
 import db from "../helpers/db.js";
 import { v4 as uuidv4 } from "uuid";
 import bcrypt from "bcrypt";
+import setSessionCookie from "../helpers/setSessionCookie.js";
 
 const login = async (req, res) => {
   if (!req.body)

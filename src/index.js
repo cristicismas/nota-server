@@ -5,7 +5,14 @@ import bodyParser from "body-parser";
 import cookieParser from "cookie-parser";
 import validateSession from "./helpers/validateSession.js";
 
-import { getAllPages, getPage, login, validate, logout } from "./handlers.js";
+import {
+  getAllPages,
+  getPage,
+  login,
+  validate,
+  logout,
+  addPage,
+} from "./handlers.js";
 
 dotenv.config({});
 
@@ -37,9 +44,12 @@ app.use((req, res, next) => {
   }
 });
 
+app.post("/login", login);
 app.post("/logout", logout);
 app.post("/validate", validate);
-app.post("/login", login);
+
+app.post("/page", addPage);
+
 app.get("/pages", getAllPages);
 app.get("/pages/:page", getPage);
 

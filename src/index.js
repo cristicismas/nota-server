@@ -48,7 +48,6 @@ app.use((req, res, next) => {
   }
 });
 
-// TODO: try/catch all routes in case we get invalid input format
 app.post("/login", login);
 app.post("/logout", logout);
 app.post("/validate", validate);

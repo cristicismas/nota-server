@@ -7,8 +7,16 @@ import validateSession from "./helpers/validateSession.js";
 
 import handlers from "./handlers/index.js";
 
-const { getAllPages, getPage, login, validate, logout, addPage, deletePage } =
-  handlers;
+const {
+  getAllPages,
+  getPage,
+  login,
+  validate,
+  logout,
+  addPage,
+  deletePage,
+  editTabContent,
+} = handlers;
 
 dotenv.config({});
 
@@ -40,6 +48,7 @@ app.use((req, res, next) => {
   }
 });
 
+// TODO: try/catch all routes in case we get invalid input format
 app.post("/login", login);
 app.post("/logout", logout);
 app.post("/validate", validate);
@@ -49,6 +58,7 @@ app.post("/page", addPage);
 app.get("/pages", getAllPages);
 app.get("/pages/:page", getPage);
 app.delete("/pages/:page_id", deletePage);
+app.put("/tabs/:tab_id", editTabContent);
 
 app.listen(port, () => {
   console.log("Listening on port: ", port);

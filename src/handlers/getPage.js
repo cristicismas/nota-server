@@ -1,10 +1,5 @@
 import db from "../helpers/db.js";
 
-const PAGE_TYPE = {
-  TEXT: "text",
-  KANBAN: "kanban",
-};
-
 const getPage = (req, res) => {
   const page_slug = req.params.page;
 

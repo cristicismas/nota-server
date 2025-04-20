@@ -5,6 +5,7 @@ import getPage from "./getPage.js";
 import login from "./login.js";
 import logout from "./logout.js";
 import validate from "./validate.js";
+import editTabContent from "./editTabContent.js";
 
 const handlers = {
   addPage,
@@ -14,6 +15,7 @@ const handlers = {
   logout,
   validate,
   deletePage,
+  editTabContent,
 };
 
 export default handlers;

@@ -53,24 +53,37 @@ const addPage = (req, res) => {
     page_title: pageTitle,
   };
 
-  db.prepare(
+  const addPageQuery = db.prepare(
     "INSERT INTO pages (slug, user_id, page_uuid, page_order, page_title) VALUES (@slug, @user_id, @page_uuid, @page_order, @page_title)",
-  ).run(newPageData);
+  );
+  const getAddedPageQuery = db.prepare(
+    "SELECT page_id FROM pages WHERE slug = ?",
+  );
 
-  const addedPageId = db
-    .prepare("SELECT page_id FROM pages WHERE slug = ?")
-    .get(pageSlug).page_id;
+  const addFirstTabQuery = db.prepare(
+    "INSERT INTO tabs (title, page_id, tab_type, text_content, generation, tab_order) VALUES (@title, @page_id, @tab_type, @text_content, @generation, @tab_order)",
+  );
 
-  const firstTabData = {
-    title: "First tab",
-    page_id: addedPageId,
-    tab_type: "text",
-    tab_order: 0,
-  };
+  const createPageTransaction = db.transaction(() => {
+    addPageQuery.run(newPageData);
 
-  db.prepare(
-    "INSERT INTO tabs (title, page_id, tab_type, tab_order) VALUES (@title, @page_id, @tab_type, @tab_order)",
-  ).run(firstTabData);
+    const addedPageId = getAddedPageQuery.get(pageSlug).page_id;
+
+    const firstTabData = {
+      title: "First tab",
+      page_id: addedPageId,
+      text_content: JSON.stringify([
+        { type: "paragraph", children: [{ text: "" }] },
+      ]),
+      tab_type: "text",
+      generation: 0,
+      tab_order: 0,
+    };
+
+    addFirstTabQuery.run(firstTabData);
+  });
+
+  createPageTransaction();
 
   return res.json(newPageData);
 };

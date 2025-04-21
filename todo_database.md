@@ -6,3 +6,4 @@
     5. users
 
 - create all required indexes
+    - probably one for tab_id, this is used a lot when modifying text tabs

@@ -20,7 +20,6 @@ const editTabContent = (req, res) => {
   const { tab_type, text_content, generation } = body;
 
   if (!tab_type || !text_content || isNaN(generation)) {
-    console.log(tab_type, text_content, generation);
     return res
       .status(400)
       .json({ message: "Request body doesn't have all the required data." });

@@ -1,9 +1,6 @@
 import { v4 as uuidv4 } from "uuid";
 import db from "../helpers/db.js";
-
-const slugify = (string) => {
-  return string.toLowerCase().replaceAll(" ", "-");
-};
+import slugify from "../helpers/slugify.js";
 
 const addPage = (req, res) => {
   const sessionId = req?.cookies?.sessionId;
@@ -19,6 +16,12 @@ const addPage = (req, res) => {
     return res
       .status(400)
       .json({ message: "No page title sent in the request body" });
+  }
+
+  if (pageTitle.trim() === "") {
+    return res
+      .status(400)
+      .json({ message: "The pageTitle cannot be an empty string" });
   }
 
   const userSession = db

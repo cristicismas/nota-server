@@ -16,6 +16,7 @@ const {
   addPage,
   deletePage,
   editTabContent,
+  renamePage,
 } = handlers;
 
 dotenv.config({});
@@ -57,6 +58,7 @@ app.post("/page", addPage);
 app.get("/pages", getAllPages);
 app.get("/pages/:page", getPage);
 app.delete("/pages/:page_id", deletePage);
+app.put("/pages/:page_id", renamePage);
 app.put("/tabs/:tab_id", editTabContent);
 
 app.listen(port, () => {

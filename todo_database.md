@@ -1,3 +1,5 @@
+# TODO when creating a new database for this app
+
 - create all relevant tables:
     1. pages
     2. sessions

@@ -5,8 +5,6 @@ import slugify from "../helpers/slugify.js";
 const addPage = (req, res) => {
   const sessionId = req?.cookies?.sessionId;
 
-  if (!sessionId) return res.status(401).json({ message: "Unauthorized" });
-
   if (!req.body)
     return res.status(400).json({ message: "No body present in the request" });
 
@@ -59,34 +57,8 @@ const addPage = (req, res) => {
   const addPageQuery = db.prepare(
     "INSERT INTO pages (slug, user_id, page_uuid, page_order, page_title) VALUES (@slug, @user_id, @page_uuid, @page_order, @page_title)",
   );
-  const getAddedPageQuery = db.prepare(
-    "SELECT page_id FROM pages WHERE slug = ?",
-  );
 
-  const addFirstTabQuery = db.prepare(
-    "INSERT INTO tabs (title, page_id, tab_type, text_content, generation, tab_order) VALUES (@title, @page_id, @tab_type, @text_content, @generation, @tab_order)",
-  );
-
-  const createPageTransaction = db.transaction(() => {
-    addPageQuery.run(newPageData);
-
-    const addedPageId = getAddedPageQuery.get(pageSlug).page_id;
-
-    const firstTabData = {
-      title: "First tab",
-      page_id: addedPageId,
-      text_content: JSON.stringify([
-        { type: "paragraph", children: [{ text: "" }] },
-      ]),
-      tab_type: "text",
-      generation: 0,
-      tab_order: 0,
-    };
-
-    addFirstTabQuery.run(firstTabData);
-  });
-
-  createPageTransaction();
+  addPageQuery.run(newPageData);
 
   return res.json(newPageData);
 };

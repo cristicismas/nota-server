@@ -5,19 +5,16 @@ import bodyParser from "body-parser";
 import cookieParser from "cookie-parser";
 import validateSession from "./helpers/validateSession.js";
 
-import handlers from "./handlers/index.js";
-
-const {
-  getAllPages,
-  getPage,
-  login,
-  validate,
-  logout,
-  addPage,
-  deletePage,
-  editTabContent,
-  renamePage,
-} = handlers;
+import getAllPages from "./handlers/getAllPages.js";
+import getPage from "./handlers/getPage.js";
+import login from "./handlers/login.js";
+import validate from "./handlers/validate.js";
+import logout from "./handlers/logout.js";
+import addPage from "./handlers/addPage.js";
+import deletePage from "./handlers/deletePage.js";
+import editTabContent from "./handlers/editTabContent.js";
+import renamePage from "./handlers/renamePage.js";
+import addTab from "./handlers/addTab.js";
 
 dotenv.config({});
 
@@ -54,11 +51,12 @@ app.post("/logout", logout);
 app.post("/validate", validate);
 
 app.post("/page", addPage);
-
 app.get("/pages", getAllPages);
 app.get("/pages/:page", getPage);
-app.delete("/pages/:page_id", deletePage);
 app.put("/pages/:page_id", renamePage);
+app.delete("/pages/:page_id", deletePage);
+
+app.post("/tab", addTab);
 app.put("/tabs/:tab_id", editTabContent);
 
 app.listen(port, () => {

@@ -17,6 +17,7 @@ import renamePage from "./handlers/renamePage.js";
 import addTab from "./handlers/addTab.js";
 import deleteTab from "./handlers/deleteTab.js";
 import renameTab from "./handlers/renameTab.js";
+import getKanbanContent from "./handlers/getKanbanContent.js";
 
 dotenv.config({});
 
@@ -63,6 +64,7 @@ app.post("/tab", addTab);
 app.put("/tabs/:tab_id", editTabContent);
 app.put("/tabs/:tab_id/rename", renameTab);
 app.delete("/tabs/:tab_id", deleteTab);
+app.get("/tabs/:tab_id", getKanbanContent);
 
 app.listen(port, () => {
   console.log("Listening on port: ", port);

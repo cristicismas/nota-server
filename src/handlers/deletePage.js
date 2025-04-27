@@ -5,11 +5,17 @@ const deletePage = (req, res) => {
 
   if (!page_id) {
     return res
-      .status(40)
+      .status(400)
       .json({ message: "No page_id given in the parameters" });
   }
 
-  db.prepare("DELETE FROM pages WHERE page_id = ?").run(page_id);
+  const info = db.prepare("DELETE FROM pages WHERE page_id = ?").run(page_id);
+
+  if (info.changes === 0) {
+    return res.status(400).json({
+      message: "Given page_id was not found. No operation was performed.",
+    });
+  }
 
   return res.json({ message: "Page successfully deleted" });
 };

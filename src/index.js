@@ -15,6 +15,7 @@ import deletePage from "./handlers/deletePage.js";
 import editTabContent from "./handlers/editTabContent.js";
 import renamePage from "./handlers/renamePage.js";
 import addTab from "./handlers/addTab.js";
+import deleteTab from "./handlers/deleteTab.js";
 
 dotenv.config({});
 
@@ -46,6 +47,7 @@ app.use((req, res, next) => {
   }
 });
 
+// TODO: clean up old sessions on a cron job
 app.post("/login", login);
 app.post("/logout", logout);
 app.post("/validate", validate);
@@ -58,6 +60,7 @@ app.delete("/pages/:page_id", deletePage);
 
 app.post("/tab", addTab);
 app.put("/tabs/:tab_id", editTabContent);
+app.delete("/tabs/:tab_id", deleteTab);
 
 app.listen(port, () => {
   console.log("Listening on port: ", port);

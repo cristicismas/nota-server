@@ -16,6 +16,7 @@ import editTabContent from "./handlers/editTabContent.js";
 import renamePage from "./handlers/renamePage.js";
 import addTab from "./handlers/addTab.js";
 import deleteTab from "./handlers/deleteTab.js";
+import renameTab from "./handlers/renameTab.js";
 
 dotenv.config({});
 
@@ -60,6 +61,7 @@ app.delete("/pages/:page_id", deletePage);
 
 app.post("/tab", addTab);
 app.put("/tabs/:tab_id", editTabContent);
+app.put("/tabs/:tab_id/rename", renameTab);
 app.delete("/tabs/:tab_id", deleteTab);
 
 app.listen(port, () => {

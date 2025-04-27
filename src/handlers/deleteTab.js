@@ -11,6 +11,8 @@ const deleteTab = (req, res) => {
 
   const info = db.prepare("DELETE FROM tabs WHERE tab_id = ?").run(tab_id);
 
+  // TODO: after deletion, change the tab_order of all tabs to be incremental
+
   if (info.changes === 0) {
     return res.status(400).json({
       message: "Given tab_id was not found. No operation was performed.",

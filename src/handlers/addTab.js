@@ -23,15 +23,15 @@ const addTab = (req, res) => {
 
   const highestOrderTab = db
     .prepare(
-      "SELECT * FROM tabs WHERE tab_order = (SELECT MAX(tab_order) FROM tabs)",
+      "SELECT * FROM tabs WHERE tab_order = (SELECT MAX(tab_order) FROM tabs WHERE page_id = ?)",
     )
-    .get();
+    .get(page_id);
 
   const tabData = {
     title,
     page_id,
     tab_type,
-    tab_order: highestOrderTab.tab_order + 1,
+    tab_order: highestOrderTab ? highestOrderTab.tab_order + 1 : 0,
     generation: 0,
   };
 

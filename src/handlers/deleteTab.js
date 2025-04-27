@@ -29,7 +29,6 @@ const deleteTab = (req, res) => {
     "UPDATE tabs SET tab_order = ? WHERE tab_id = ?",
   );
 
-  console.log(all_tabs);
   const updateOrderTransaction = db.transaction(() => {
     all_tabs.forEach((tab, index) => {
       updateQuery.run(index, tab.tab_id);

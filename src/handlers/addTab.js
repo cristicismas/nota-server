@@ -46,11 +46,20 @@ const addTab = (req, res) => {
     const tab_info = addKanbanTabQuery.run(tabData);
     const current_tab_id = tab_info.lastInsertRowid;
 
+    const highestOrderCategory = db
+      .prepare(
+        "SELECT * FROM kanban_categories WHERE category_order = (SELECT MAX(category_order) FROM kanban_categories WHERE tab_id = ?)",
+      )
+      .get(current_tab_id);
+
     db.prepare(
-      "INSERT INTO kanban_categories (title, tab_id) VALUES (@title, @tab_id)",
+      "INSERT INTO kanban_categories (title, tab_id, category_order) VALUES (@title, @tab_id, @category_order)",
     ).run({
       title: "Kanban Column",
       tab_id: current_tab_id,
+      category_order: highestOrderCategory
+        ? highestOrderCategory.category_order + 1
+        : 0,
     });
   }
 

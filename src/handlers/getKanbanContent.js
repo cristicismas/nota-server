@@ -11,7 +11,9 @@ const getKanbanContent = (req, res) => {
 
   const categories =
     db
-      .prepare("SELECT * FROM kanban_categories WHERE tab_id = ?")
+      .prepare(
+        "SELECT * FROM kanban_categories WHERE tab_id = ? ORDER BY category_order ASC",
+      )
       .all(tab_id) || [];
 
   const cards =

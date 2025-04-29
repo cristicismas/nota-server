@@ -20,6 +20,7 @@ import renameTab from "./handlers/renameTab.js";
 import getKanbanContent from "./handlers/getKanbanContent.js";
 import addCard from "./handlers/addCard.js";
 import addCategory from "./handlers/addCategory.js";
+import updateCategories from "./handlers/updateCategories.js";
 
 dotenv.config({});
 
@@ -56,6 +57,8 @@ app.post("/login", login);
 app.post("/logout", logout);
 app.post("/validate", validate);
 
+// TODO: check that the user owns the data for all these operations, maybe with a middleware
+// right now it's possible to edit even entries that the user doesn't own
 app.post("/page", addPage);
 app.get("/pages", getAllPages);
 app.get("/pages/:page", getPage);
@@ -68,6 +71,7 @@ app.put("/tabs/:tab_id/rename", renameTab);
 app.delete("/tabs/:tab_id", deleteTab);
 app.get("/tabs/:tab_id", getKanbanContent);
 
+app.put("/categories", updateCategories);
 app.post("/category", addCategory);
 app.post("/card", addCard);
 

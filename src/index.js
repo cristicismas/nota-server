@@ -21,6 +21,7 @@ import getKanbanContent from "./handlers/getKanbanContent.js";
 import addCard from "./handlers/addCard.js";
 import addCategory from "./handlers/addCategory.js";
 import updateCategories from "./handlers/updateCategories.js";
+import updateCategory from "./handlers/updateCategory.js";
 import deleteCategory from "./handlers/deleteCategory.js";
 
 dotenv.config({});
@@ -74,6 +75,7 @@ app.get("/tabs/:tab_id", getKanbanContent);
 
 app.put("/categories", updateCategories);
 app.post("/category", addCategory);
+app.put("/categories/:category_id", updateCategory);
 app.post("/card", addCard);
 app.delete("/category/:category_id", deleteCategory);
 

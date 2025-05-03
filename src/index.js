@@ -25,6 +25,7 @@ import addCategory from "./handlers/addCategory.js";
 import updateCategories from "./handlers/updateCategories.js";
 import updateCategory from "./handlers/updateCategory.js";
 import deleteCategory from "./handlers/deleteCategory.js";
+import reorderCards from "./handlers/reorderCards.js";
 
 dotenv.config({});
 
@@ -75,13 +76,15 @@ app.put("/tabs/:tab_id/rename", renameTab);
 app.delete("/tabs/:tab_id", deleteTab);
 app.get("/tabs/:tab_id", getKanbanContent);
 
-app.put("/categories", updateCategories);
 app.post("/category", addCategory);
+app.put("/categories", updateCategories);
 app.put("/categories/:category_id", updateCategory);
-app.post("/card", addCard);
-app.delete("/cards/:card_id", deleteCard);
-app.put("/card/:card_id", editCard);
 app.delete("/category/:category_id", deleteCategory);
+
+app.post("/card", addCard);
+app.put("/card/:card_id", editCard);
+app.put("/cards", reorderCards);
+app.delete("/cards/:card_id", deleteCard);
 
 app.listen(port, () => {
   console.log("Listening on port: ", port);

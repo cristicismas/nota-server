@@ -17,7 +17,11 @@ const getKanbanContent = (req, res) => {
       .all(tab_id) || [];
 
   const cards =
-    db.prepare("SELECT * FROM kanban_cards WHERE tab_id = ?").all(tab_id) || [];
+    db
+      .prepare(
+        "SELECT * FROM kanban_cards WHERE tab_id = ? ORDER BY card_order ASC",
+      )
+      .all(tab_id) || [];
 
   res.json({ categories, cards });
 };

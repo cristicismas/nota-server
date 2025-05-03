@@ -30,7 +30,7 @@ const editTabContent = (req, res) => {
     .get(tab_id)?.generation;
 
   if (lastTabGeneration >= generation) {
-    return res.json({
+    return res.status(409).json({
       message: "Out of order generation. Skipping this edit...",
     });
   }

@@ -19,6 +19,7 @@ import deleteTab from "./handlers/deleteTab.js";
 import renameTab from "./handlers/renameTab.js";
 import getKanbanContent from "./handlers/getKanbanContent.js";
 import addCard from "./handlers/addCard.js";
+import deleteCard from "./handlers/deleteCard.js";
 import editCard from "./handlers/editCard.js";
 import addCategory from "./handlers/addCategory.js";
 import updateCategories from "./handlers/updateCategories.js";
@@ -78,6 +79,7 @@ app.put("/categories", updateCategories);
 app.post("/category", addCategory);
 app.put("/categories/:category_id", updateCategory);
 app.post("/card", addCard);
+app.delete("/cards/:card_id", deleteCard);
 app.put("/card/:card_id", editCard);
 app.delete("/category/:category_id", deleteCategory);
 

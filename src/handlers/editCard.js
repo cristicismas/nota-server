@@ -43,8 +43,6 @@ const addCard = (req, res) => {
     typeof last_card_generation !== "undefined" &&
     last_card_generation >= generation
   ) {
-    console.log("last card gen: ", last_card_generation);
-    console.log("gen: ", generation);
     return res.status(409).json({
       message: "Out of order generation. Skipping this edit...",
     });
@@ -53,8 +51,6 @@ const addCard = (req, res) => {
   db.prepare(
     "UPDATE kanban_cards SET title = ?, description = ?, card_order = ?, generation = ? WHERE card_id = ?",
   ).run(title, description, card_order, generation, card_id);
-
-  console.log("latest title: ", title);
 
   return res.json({
     message: "Successfully updated card",

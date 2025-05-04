@@ -35,8 +35,6 @@ const reorderCards = (req, res) => {
     "UPDATE kanban_cards SET card_order = ?, category_id = ? WHERE card_id = ?",
   );
 
-  console.log(cardsPerCategory);
-
   const updateTransaction = db.transaction(() => {
     cardsPerCategory.forEach((categoryArray) => {
       categoryArray.forEach((card) => {

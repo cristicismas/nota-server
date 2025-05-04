@@ -20,11 +20,15 @@ const addCard = (req, res) => {
 
   const card_order = highestOrderCard ? highestOrderCard?.card_order + 1 : 0;
 
+  const description = JSON.stringify([
+    { type: "paragraph", children: [{ text: "" }] },
+  ]);
+
   const new_card = db
     .prepare(
       "INSERT INTO kanban_cards ( category_id, tab_id, title, description, generation, card_order ) VALUES (?, ?, ?, ?, ?, ?)",
     )
-    .run(category_id, tab_id, "", "", 0, card_order);
+    .run(category_id, tab_id, "", description, 0, card_order);
 
   return res.json({
     message: "Successfully added card",

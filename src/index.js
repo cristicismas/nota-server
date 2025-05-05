@@ -58,6 +58,7 @@ app.use((req, res, next) => {
 });
 
 // TODO: clean up old sessions on a cron job
+// TODO: make a db backup on a cron job
 app.post("/login", login);
 app.post("/logout", logout);
 app.post("/validate", validate);

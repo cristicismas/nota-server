@@ -4,8 +4,12 @@
     1. pages
     2. sessions
     3. tabs
-    4. categories
-    5. users
+    4. kanban_categories
+    5. kanban_cards
+    6. users
 
 - create all required indexes
-    - probably one for tab_id, this is used a lot when modifying text tabs
+    - tab_id
+    - category_id
+    - card_id
+    - page_id

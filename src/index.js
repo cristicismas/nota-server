@@ -30,7 +30,7 @@ import reorderCards from "./handlers/reorderCards.js";
 dotenv.config({});
 
 const app = express();
-const port = 8000;
+const port = process.env.PORT;
 
 const corsOptions = {
   origin: process.env.ALLOW_ORIGIN,
